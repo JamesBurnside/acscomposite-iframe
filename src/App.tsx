@@ -3,10 +3,17 @@ import { ThemeToggle } from './ThemeToggle';
 import { LogContainer } from './LogContainer';
 import { Button } from '@mui/material';
 
+type CallStateEventPayload = Partial<{
+  page: string;
+  displayName: string;
+  callId: string;
+  remoteParticipants: {}
+}>;
+
 const defulatIframeUrl = 'https://jamesburnside-azure-communication-ui-library-6pvjqqjf5q5q-3000.app.github.dev/';
 
 function App() {
-  const [callState, setCallState] = useState<any>({});
+  const [callState, setCallState] = useState<CallStateEventPayload>({});
   
   const logs = useMemo(() => ([
     `page: ${callState.page}`,
@@ -44,7 +51,7 @@ function App() {
     const handleMessage = (event: MessageEvent<any>) => {
       console.log('new message!', event);
       if (event.data?.type === 'ACS_STATE_CHANGE') {
-        const state = event.data?.state;
+        const state: CallStateEventPayload | undefined = event.data?.state;
         if (!state) return;
         setCallState(state);
       }
@@ -55,8 +62,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    //@ts-ignore
-    $( "#resizable" ).resizable();
+    ($( "#resizable" ) as any).resizable();
   }, []);
 
 
